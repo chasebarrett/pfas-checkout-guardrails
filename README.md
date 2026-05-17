@@ -7,15 +7,26 @@ The project reduced prohibited PFAS orders to near-zero, eliminated manual inter
 
 ---
 
+## Table of Contents
+- [Business Context](#-business-context)
+- [The Initial Problem](#%EF%B8%8F-the-initial-problem)
+- [Project Goals](#-project-goals)
+- [Solution Overview](#%EF%B8%8F-solution-overview)
+- [Results](#-results)
+- [Workflow Diagram](#-workflow-diagram)
+- [Assumptions & Limitations](notes/assumptions-and-limitations.md)
+
+---
+
 ## 🧭 Business Context
 
-As of **January 1, 2025**, California and New York enacted regulations prohibiting the sale of apparel and footwear containing certain **PFAS (per- and poly-fluoroalkyl substances)** compounds, large group of human-made "forever chemicals" frequently used to add water-repellancy.
+As of **January 1, 2025**, California and New York enacted regulations prohibiting the sale of apparel and footwear containing certain **PFAS (per- and poly-fluoroalkyl substances)** compounds — a large group of human-made "forever chemicals" frequently used to add water repellency. Maine followed shortly after, and **Vermont joined the list in January 2026**, expanding the scope of restricted shipping destinations.
 
 Although SCARPA had already begun phasing PFAS out of its footwear line, a significant amount of legacy inventory remained in circulation at the regulatory deadline.
 
 This created a critical operational challenge:
 
-- Certain products could **not legally ship** to California, New York, or Maine 
+- Certain products could **not legally ship** to California, New York, Maine, or Vermont
 - Customers were still able to **place orders**
 - Compliance enforcement occurred **late in the fulfillment lifecycle**
 
@@ -78,7 +89,7 @@ This single source of truth enabled downstream automation without duplicating lo
 Using **Shopify Flow**:
 
 - If order contains a `PFAS`-tagged product  
-- AND shipping state = CA or NY  
+- AND shipping state = CA, NY, ME, or VT  
 
 → Order is **automatically canceled**, **refunded**, and **customer notified**
 
@@ -132,9 +143,9 @@ This project demonstrates how:
 
 ## 🔍 Future Considerations
 
-- Expand logic to additional states as regulations evolve
 - Surface PFAS eligibility earlier on PDPs (geo-aware)
 - Centralize compliance logic across markets
+- Expand state coverage as additional regulations come into effect (the tag-based architecture allows new states to be added by updating the Flow trigger, with no product-level changes required)
 
 ---
 
@@ -144,8 +155,9 @@ This project demonstrates how:
 flowchart TD
   A[Customer adds product to cart]
   B{Product tagged PFAS?}
-  C{Shipping state CA or NY?}
+  C{Shipping state restricted?}
   D[Checkout warning displayed]
+  X{Customer proceeds anyway?}
   E[Customer abandons or changes cart]
   F[Order placed]
   G[Shopify Flow auto-cancel & refund]
@@ -157,8 +169,9 @@ flowchart TD
   B -- Yes --> C
   C -- No --> I
   C -- Yes --> D
-  D --> E
-  D --> F
+  D --> X
+  X -- No --> E
+  X -- Yes --> F
   F --> G
   G --> H
 ```
