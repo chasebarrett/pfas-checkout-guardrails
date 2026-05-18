@@ -8,7 +8,7 @@ This document outlines the assumptions made during implementation and known limi
 
 - PFAS applicability could be accurately represented at the product level using Shopify tags
 - Shopify Flow and native checkout extensibility were sufficient to enforce compliance logic
-- Shipping restrictions were limited to specific U.S. states (CA, NY, ME) at time of implementation
+- Shipping restrictions initially covered CA, NY, and ME at implementation; VT was added in Spring 2026 as that state's regulations took effect
 - Customer education at checkout would reduce post-purchase cancellations more effectively than PDP-only warnings
 
 ---
